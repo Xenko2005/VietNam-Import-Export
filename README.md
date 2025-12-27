@@ -40,20 +40,9 @@ Where:
 
 ### Fake Monthly Export Data 
 
-| Month | Export (VND) |
-|------:|-------------:|
-| 1 | 100 |
-| 2 | 120 |
-| 3 | 130 |
-| 4 | 150 |
-| 5 | 170 |
-| 6 | 190 |
-| 7 | 210 |
-| 8 | 240 |
-| 9 | 260 |
-| 10 | 280 |
-| 11 | 300 |
-| 12 | 320 |
+| Month | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
+|------:|---|---|---|---|---|---|---|---|---|----|----|----|
+| Export (VND) | 100 | 120 | 130 | 150 | 170 | 190 | 210 | 240 | 260 | 280 | 300 | 320 |
 
 #### 1. Base Trend $g_0(t)$
 - Prophet first fits a simple straight line for all data:
@@ -81,14 +70,14 @@ $$k_{\text{new}} = k + \delta_1$$
 #### 3. Offset Correction (γ)
 
 - When the slope changes, the line can “jump” at the changepoint.  
-- Prophet adds $γ₁$ (gamma) to move the line up or down, keeping it smooth and  
+- Prophet adds $γ_1$ (gamma) to move the line up or down, keeping it smooth and  
 continuous.
 
 $$
-y₁ = −δ₁ ⋅ t₁
+y_1 = −δ_1 ⋅ t_1
 $$
 
-With $δ₁ = +10$ and $t₁ = 7$ → $γ₁ = -70$.
+With $δ_1 = +10$ and $t_1 = 7$ → $γ_1 = -70$.
 
 => So Prophet corrects the intercept by $-70$ to keep the two parts connected.
 
@@ -96,9 +85,7 @@ With $δ₁ = +10$ and $t₁ = 7$ → $γ₁ = -70$.
 
 The complete trend is:
 
-$$
-g(t) = k + a(t)δt + m + a(t)⋅y
-$$
+$$g(t) = k + a(t)δt + m + a(t)⋅y$$
 
 where $a(t)$ is $0$ before month $7$ and $1$ after month $7$.
 
@@ -217,6 +204,96 @@ $$h(t) = 20 \cdot D_1(t) + 15 \cdot D_2(t)$$
 - When $t = 1$ → $h(1) = 20$  
 - When $t = 8$ → $h(8) = 15$  
 - For other months → $h(t) = 0$
+
+## 5. Implementation The Model:
+
+### Step 1: Data Preparation
+
+Prophet needs two main columns:
+
+- **ds**: the date or time column  
+- **y**: the value we want to predict (for example: export value)
+
+The data should be in time order. Prophet can still work even if some months are missing.
+
+### Step 2: Fit the Prophet Model
+
+Create the model and fit it to your data. This step helps Prophet learn the pattern and trend in your data.
+
+**R**
+
+```r
+m <- prophet(
+  growth = "linear",
+  yearly.seasonality = TRUE,
+  weekly.seasonality = FALSE,
+  daily.seasonality = FALSE,
+  changepoint.prior.scale = 0.5,
+  interval.width = 0.95
+)
+m <- fit.prophet(m, data)
+```
+
+### Step 3: Make Future Dataframe
+
+Create a new time series for the next 12 months:
+
+```r
+future <- make_future_dataframe(m, periods = 12, freq = "month")
+```
+### Step 4: Forecast Future Values
+
+Predict the export values for the next 12 months:
+
+```r
+forecast <- predict(m, future)
+```
+
+Prophet gives three main results:
+
+- yhat: predicted value
+
+- yhat_lower: lower bound of forecast interval
+
+- yhat_upper: upper bound of forecast interval
+
+### Step 5: Visualize the Forecast
+
+The black dots show the actual data, and the blue area shows the forecast with confidence interval.
+
+### Step 6: Evaluate the Model
+
+Compare predicted values with real data. Use metrics such as MAPE and RMSE to check accuracy.
+
+## 6. Prophet Model Parameters Explanation
+
+| No. | Growth | Changepoint.Prior.Scale | Yearly.Seasonality | Weekly.Seasonality | Daily.Seasonality | Interval.Width | Changepoint.Range | Fourier.Order | Seasonality.Mode | Seasonality.Prior.Scale | Holidays | Holidays.Prior.Scale |
+|----|--------|-------------------------|--------------------|--------------------|-------------------|----------------|-------------------|---------------|------------------|-------------------------|----------|----------------------|
+| Default | linear | 0.05 | TRUE | FALSE | FALSE | 0.80 | 0.8 | 10 | additive | 10.0 | NULL | 10.0 | 
+
+
+## 7.  Metric of Model
+
+### 7.1. MAPE (Mean Absolute Percentage Error)
+
+- Shows the average percentage difference between the predicted and actual values.  
+- Lower is better.
+
+$$MAPE = \frac{1}{n} \sum \left| \frac{actual - predicted}{actual} \right| \times 100$$
+
+### 7.2. RMSE (Root Mean Squared Error)
+
+- Measures how far predictions are from actual values.  
+- Lower RMSE means the model predicts closer to reality.
+
+$$RMSE = \sqrt{\frac{1}{n} \sum (actual - predicted)^2}$$
+
+## 8. Result of Model
+
+| Metric | EU | ASEAN | United States | Japan | Korea | Australia | China | India | Ukraine |
+|------|------|------|------|------|------|------|------|------|------|
+| MAPE (%) | 8.8 | 16.48 | 6.05 | 31.31 | 4.88 | 11.57 | 7.85 | 16.08 | 549.81 |
+| RMSE | 126768.6 | 834600.51 | 101389.2 | 621258.3 | 295817.6 | 76605.06 | 1195641 | 9022525.52 | 57802.77 |
 
 
 
