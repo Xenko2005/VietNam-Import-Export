@@ -38,7 +38,7 @@ Where:
   - $\varepsilon_t$ is random noise
 ### 4.1. Comprehension about Trend Modeling - $g(t)$
 
-### Fake Monthly Export Data 
+### Fake Monthly Export Data (Let's use examples to better understand the model.)
 
 | Month | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
 |------:|---|---|---|---|---|---|---|---|---|----|----|----|
@@ -265,7 +265,7 @@ The black dots show the actual data, and the blue area shows the forecast with c
 
 Compare predicted values with real data. Use metrics such as MAPE and RMSE to check accuracy.
 
-## 6. Prophet Model Parameters Explanation
+## 6. Prophet Model Parameters
 
 | No. | Growth | Changepoint.Prior.Scale | Yearly.Seasonality | Weekly.Seasonality | Daily.Seasonality | Interval.Width | Changepoint.Range | Fourier.Order | Seasonality.Mode | Seasonality.Prior.Scale | Holidays | Holidays.Prior.Scale |
 |----|--------|-------------------------|--------------------|--------------------|-------------------|----------------|-------------------|---------------|------------------|-------------------------|----------|----------------------|
