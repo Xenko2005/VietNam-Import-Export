@@ -251,11 +251,11 @@ forecast <- predict(m, future)
 
 Prophet gives three main results:
 
-- yhat: predicted value
+- ```yhat```: predicted value
 
-- yhat_lower: lower bound of forecast interval
+- ```yhat_lower```: lower bound of forecast interval
 
-- yhat_upper: upper bound of forecast interval
+- ```yhat_upper```: upper bound of forecast interval
 
 ### Step 5: Visualize the Forecast
 
@@ -271,24 +271,30 @@ Compare predicted values with real data. Use metrics such as MAPE and RMSE to ch
 |----|--------|-------------------------|--------------------|--------------------|-------------------|----------------|-------------------|---------------|------------------|-------------------------|----------|----------------------|
 | Default | linear | 0.05 | TRUE | FALSE | FALSE | 0.80 | 0.8 | 10 | additive | 10.0 | NULL | 10.0 | 
 
+## 7. Method Improving Model
+- Using log-transform
+- Grid Search for ```changepoint.prior.scale``` and ```seasonality.prior.scale```
+- Internal Validation (Hold-out Cross-validation)
+- Using ```changepoint.range```
+- Create 12 more dummy variables followed by months
 
-## 7.  Metric of Model
+## 8.  Metric of Model
 
-### 7.1. MAPE (Mean Absolute Percentage Error)
+### 8.1. MAPE (Mean Absolute Percentage Error)
 
 - Shows the average percentage difference between the predicted and actual values.  
 - Lower is better.
 
 $$MAPE = \frac{1}{n} \sum \left| \frac{actual - predicted}{actual} \right| \times 100$$
 
-### 7.2. RMSE (Root Mean Squared Error)
+### 8.2. RMSE (Root Mean Squared Error)
 
 - Measures how far predictions are from actual values.  
 - Lower RMSE means the model predicts closer to reality.
 
 $$RMSE = \sqrt{\frac{1}{n} \sum (actual - predicted)^2}$$
 
-## 8. Result of Model
+## 9. Result of Model
 
 | Metric | EU | ASEAN | United States | Japan | Korea | Australia | China | India | Ukraine |
 |------|------|------|------|------|------|------|------|------|------|
